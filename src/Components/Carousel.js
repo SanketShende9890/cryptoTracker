@@ -32,9 +32,9 @@ const Carousel = () => {
       price.toString().replace(/\B(?=(\d{3})+(?!\d))/g,",")
     )
   }
-  // useEffect(() => {
-  //   fetchTrendingCoin();
-  // }, [currency]);
+  useEffect(() => {
+    fetchTrendingCoin();
+  }, [currency]);
 
   const slate = trending.map((coin, index) => {
     const profit = coin.price_change_percentage_24h >= 0;
