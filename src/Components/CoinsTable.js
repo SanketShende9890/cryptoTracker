@@ -31,14 +31,30 @@ const CoinsTable = () => {
     setCoins(data);
     console.log(data);
   };
-//   useEffect(() => {
-//     getAll();
-//   }, [currency]);
+  useEffect(() => {
+    getAll();
+  }, [currency]);
   const darkTheme = createTheme({
     palette: {
       mode: "dark",
     },
   });
+
+  function createData(coins, price, hr24change, marketcap) {
+    return { coins, price, hr24change, marketcap };
+  }
+  
+  const rows = coins.map((data,index)=>
+    createData(data.name, data.current_price, data.price_change_24h, data.market_cap)
+  )
+  // const rows = [
+  //   createData('Frozen yoghurt', 159, 6.0, 24),
+
+  //   createData('Ice cream sandwich', 237, 9.0, 37),
+  //   createData('Eclair', 262, 16.0, 24),
+  //   createData('Cupcake', 305, 3.7, 67),
+  //   createData('Gingerbread', 356, 16.0, 49),
+  // ];
 
   return (
     <ThemeProvider theme={darkTheme}>
@@ -68,7 +84,21 @@ const CoinsTable = () => {
                   ))}
                 </TableRow>
               </TableHead>
-              <TableBody></TableBody>
+              <TableBody>
+              {rows.map((row) => (
+            <TableRow
+              key={row.coins}
+              sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+            >
+              <TableCell component="th" scope="row">
+                {row.coins}
+              </TableCell>
+              <TableCell align="right">{row.price}</TableCell>
+              <TableCell align="right">{row.hr24change}</TableCell>
+              <TableCell align="right">{row.marketcap}</TableCell>
+            </TableRow>
+          ))}
+              </TableBody>
             </Table>
           )}
         </TableContainer>
