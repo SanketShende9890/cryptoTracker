@@ -34,7 +34,7 @@ const Banner = () => {
                         fontFamily:"Montserrat"
                     }}
                 >
-                    CoinBCX
+                    CryptoCoins
                 </Typography>
                 <Typography
                     variant='subtitle2'

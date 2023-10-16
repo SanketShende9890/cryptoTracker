@@ -16,6 +16,7 @@ import {
   Typography,
 } from "@mui/material";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
+import { useNavigate } from "react-router-dom";
 
 const CoinsTable = () => {
   const { currency, symbol } = CryptoState();
@@ -23,38 +24,33 @@ const CoinsTable = () => {
   const [loading, setLoading] = useState(false);
   const TableHeader = ["Coins", "Price", "24h change", "Market cap"];
   const [search, setSearch] = useState();
-  console.log(search);
+  const navigate = useNavigate();
+
   const getAll = async () => {
     setLoading(true);
     const { data } = await axios.get(CoinList(currency));
     setLoading(false);
     setCoins(data);
-    console.log(data);
   };
   useEffect(() => {
-    getAll();
+    // getAll();
   }, [currency]);
   const darkTheme = createTheme({
     palette: {
       mode: "dark",
     },
   });
-
-  function createData(coins, price, hr24change, marketcap) {
-    return { coins, price, hr24change, marketcap };
-  }
-  
-  const rows = coins.map((data,index)=>
-    createData(data.name, data.current_price, data.price_change_24h, data.market_cap)
-  )
-  // const rows = [
-  //   createData('Frozen yoghurt', 159, 6.0, 24),
-
-  //   createData('Ice cream sandwich', 237, 9.0, 37),
-  //   createData('Eclair', 262, 16.0, 24),
-  //   createData('Cupcake', 305, 3.7, 67),
-  //   createData('Gingerbread', 356, 16.0, 49),
-  // ];
+ 
+  const handleSearch = () => {
+    return coins.filter(
+      (coin) =>
+        coin.name.toLowerCase().includes(search) ||
+        coin.symbol.toLowerCase().includes(search)
+    );
+  };
+  const numberWithCommas = (price) => {
+    return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  };
 
   return (
     <ThemeProvider theme={darkTheme}>
@@ -77,27 +73,71 @@ const CoinsTable = () => {
             <LinearProgress style={{ backgroundColor: "gold" }} />
           ) : (
             <Table sx={{ minWidth: 650 }} aria-label="simple table">
-              <TableHead sx={{backgroundColor: '#eebc1d'}}>
+              <TableHead sx={{ backgroundColor: "#eebc1d" }}>
                 <TableRow>
                   {TableHeader.map((header, index) => (
-                    <TableCell sx={{color: '#000', fontWeight: 700, fontFamily: 'Montserrat'}} align={header==="Coins"?"":"right"} key={index}>{header}</TableCell>
+                    <TableCell
+                      sx={{
+                        color: "#000",
+                        fontWeight: 700,
+                        fontFamily: "Montserrat",
+                      }}
+                      align={header === "Coins" ? "" : "right"}
+                      key={index}
+                    >
+                      {header}
+                    </TableCell>
                   ))}
                 </TableRow>
               </TableHead>
               <TableBody>
-              {rows.map((row) => (
-            <TableRow
-              key={row.coins}
-              sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-            >
-              <TableCell component="th" scope="row">
-                {row.coins}
-              </TableCell>
-              <TableCell align="right">{row.price}</TableCell>
-              <TableCell align="right">{row.hr24change}</TableCell>
-              <TableCell align="right">{row.marketcap}</TableCell>
-            </TableRow>
-          ))}
+                {handleSearch().map((row, index) => {
+                  // console.log(row, 'test');
+                  const profit = row.price_change_percentage_24h >= 0;
+                  return (
+                    <TableRow
+                      onClick={() => navigate(`/coins/${row.id}`)}
+                      key={index}
+                      sx={{ "&:last-child td, &:last-child th": { border: 0 }, cursor:'pointer',backgroundColor:'#16171a',"&:hover":{
+                        backgroundColor:'#131111',fontFamily: 'Montserrat'
+                      } }}
+                    >
+                      <TableCell style={{display:'flex',gap:15}} component="th" scope="row">
+                        <img src={row.image} 
+                          alt={row.name} 
+                          height='50'
+                          style={{marginBottom:10}}
+                          />
+                          <div style={{display:'flex', flexDirection: 'column'}}>
+                            <span style={{
+                              textTransform:'uppercase',
+                              fontSize:22
+                            }}>
+                              {row.symbol}
+                            </span>
+                            <span style={{color:'darkgrey'}}>
+                              {row.name}
+                            </span>
+                          </div>
+                      </TableCell>
+                      <TableCell align="right">
+                        {symbol}
+                        {numberWithCommas(row.current_price.toFixed(2))}
+                      </TableCell>
+                      <TableCell align="right" style={{
+                        color: profit>0 ? 'rgb(14,203,129)' :'red',
+                        fontWeight:500
+                      }}>
+                        {profit&&'+'}
+                        {row.price_change_24h.toFixed(2)}%
+                      </TableCell>
+                      <TableCell align="right">
+                        {symbol}
+                        {numberWithCommas(row.market_cap.toString().slice(0,-6))}M
+                      </TableCell>
+                    </TableRow>
+                  );
+                })}
               </TableBody>
             </Table>
           )}

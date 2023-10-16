@@ -34,7 +34,7 @@ const Header = () => {
               }}
               className="logo"
             >
-              CoinBCX
+              CryptoCoins
             </Typography>
 
             <Box sx={{ minWidth: 120 }}>
