@@ -33,7 +33,6 @@ const CoinPage = () => {
     },
   }));
 
-
   return (
     <Root >
       {/* sidebar */}

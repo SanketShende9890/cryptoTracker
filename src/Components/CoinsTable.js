@@ -44,7 +44,6 @@ console.log(search);
       mode: "dark",
     },
   });
-
   const handleSearch = () => {
     return coins.filter(
       (coin) =>
