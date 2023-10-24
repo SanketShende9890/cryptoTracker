@@ -59,7 +59,7 @@ const Carousel = () => {
   };
 
   useEffect(() => {
-    fetchTrendingCoin();
+    // fetchTrendingCoin();
   }, [currency]);
 
   const numberWithCommas = (price) => {

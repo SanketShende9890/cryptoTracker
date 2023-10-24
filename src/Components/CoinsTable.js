@@ -37,7 +37,7 @@ console.log(search);
     setCoins(data);
   };
   useEffect(() => {
-    getAll();
+    // getAll();
   }, [currency]);
   const darkTheme = createTheme({
     palette: {
